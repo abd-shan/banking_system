@@ -37,6 +37,13 @@ export interface User {
   // Add other user fields as needed
 }
 
+export interface CreateUserDto {
+  full_name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
 export interface Account {
   id: string;
   accountNumber: string;

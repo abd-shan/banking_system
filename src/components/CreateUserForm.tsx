@@ -10,6 +10,7 @@ export const CreateUserForm = () => {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [full_name,setFullName] = useState('');
   const [role, setRole] = useState<UserRole>(UserRole.CUSTOMER);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
@@ -18,13 +19,13 @@ export const CreateUserForm = () => {
     e.preventDefault();
     setMessage(null);
     setIsLoading(true);
+    setFullName(firstName + lastName);
     
     try {
       const newUser = await bankFacade.createNewUser({
         email,
         password,
-        firstName,
-        lastName,
+        full_name,
         role,
       });
 
