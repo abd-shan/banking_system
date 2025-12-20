@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { bankFacade } from '@/facades/BankFacade';
 import { CreateDepositDto, CreateWithdrawDto, CreateTransferDto } from '@/types';
+import {useAccountContext} from "@/context/AccountContext";
 
 type TransactionType = 'deposit' | 'withdraw' | 'transfer';
 
@@ -13,46 +14,33 @@ export const TransactionForm = () => {
   const [toAccountId, setToAccountId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
+  const { refreshAccounts } = useAccountContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
     setIsLoading(true);
-    
+
     try {
-      const numericAmount = parseFloat(amount);
-      if (isNaN(numericAmount) || numericAmount <= 0) {
-        throw new Error('Please enter a valid amount.');
+      const val = parseFloat(amount);
+      if (type === 'deposit') await bankFacade.performDeposit({ amount: val });
+      else if (type === 'withdraw') await bankFacade.performWithdrawal({ amount: val });
+      else {
+        const toAccountNumber = Number(toAccountId)
+        await bankFacade.performTransfer({amount: val, toAccountNumber});
       }
 
-      let result;
-      switch (type) {
-        case 'deposit':
-          const depositDto: CreateDepositDto = { amount: numericAmount };
-          result = await bankFacade.performDeposit(depositDto);
-          break;
-        case 'withdraw':
-          const withdrawDto: CreateWithdrawDto = { amount: numericAmount };
-          result = await bankFacade.performWithdrawal(withdrawDto);
-          break;
-        case 'transfer':
-          if (!toAccountId) throw new Error('Destination account ID is required for transfer.');
-          const transferDto: CreateTransferDto = { amount: numericAmount, toAccountId };
-          result = await bankFacade.performTransfer(transferDto);
-          break;
-      }
 
-      setMessage({ text: `Transaction successful! ID: ${result.id}`, type: 'success' });
+      await refreshAccounts();
+
+      alert('Transaction Completed!');
       setAmount('');
       setToAccountId('');
     } catch (e: any) {
-      const errorMessage = e.response?.data?.message || e.message || 'Transaction failed.';
-      setMessage({ text: errorMessage, type: 'error' });
+      alert(e.response?.data?.message || 'Transaction failed');
     } finally {
       setIsLoading(false);
     }
   };
-
   const MessageDisplay = () => {
     if (!message) return null;
     const baseClass = "p-3 mb-4 text-sm rounded";

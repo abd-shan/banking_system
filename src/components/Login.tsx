@@ -7,11 +7,12 @@ import { useAuthContext } from '@/context/AuthContext';
 export const LoginComponent = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
+  const [accNumber, setAccNumber] = useState('');
   const { login, isLoading, error } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const accountNumber = Number(accNumber);
     await login({ email, password, accountNumber });
   };
 
@@ -65,8 +66,8 @@ export const LoginComponent = () => {
             id="accountNumber"
             type="text"
             placeholder="Account Number"
-            value={accountNumber}
-            onChange={(e) => setAccountNumber(e.target.value)}
+            value={accNumber}
+            onChange={(e) => setAccNumber(e.target.value)}
             required
           />
         </div>

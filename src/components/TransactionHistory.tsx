@@ -18,11 +18,11 @@ export const TransactionHistory = ({ accountId }: TransactionHistoryProps) => {
     const fetchHistory = async () => {
       try {
         setIsLoading(true);
-        // Use the Facade to fetch transaction history
+        // Use the Facade to fetch transactions history
         const history = await bankFacade.fetchAccountHistory(accountId);
         setTransactions(history);
       } catch (e: any) {
-        setError(e.response?.data?.message || 'Failed to fetch transaction history.');
+        setError(e.response?.data?.message || 'Failed to fetch transactions history.');
       } finally {
         setIsLoading(false);
       }

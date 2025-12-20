@@ -3,24 +3,28 @@
 
 import { ReactNode } from 'react';
 import { Navbar } from './Navbar';
+import { Sidebar } from './Sidebar';
 import { AuthProvider } from '@/context/AuthContext';
 
 interface LayoutProps {
-  children: ReactNode;
+    children: ReactNode;
 }
 
 export const Layout = ({ children }: LayoutProps) => {
-  return (
-    <AuthProvider>
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow container mx-auto p-4">
-          {children}
-        </main>
-        <footer className="bg-gray-800 text-white p-4 text-center text-sm">
-            Bank Management System Frontend (Next.js + Facade Pattern)
-        </footer>
-      </div>
-    </AuthProvider>
-  );
+    return (
+
+            <div className="min-h-screen flex flex-col overflow-hidden">
+                <Navbar />
+                <div className="flex flex-grow">
+                    <Sidebar />
+                    <main className="flex-grow p-4">
+                        {children}
+                    </main>
+                </div>
+                <footer className="bg-gray-800 text-white p-4 text-center text-sm">
+                    Bank Management System Frontend
+                </footer>
+            </div>
+
+    );
 };

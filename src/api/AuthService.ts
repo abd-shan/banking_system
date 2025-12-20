@@ -1,27 +1,33 @@
-// src/api/AuthService.ts
 import { apiClient } from './ApiClient';
-import { LoginDto, AuthResponse } from '@/types';
+import { tokenStorage } from "@/auth/tokenStorage";
+import { LoginDto } from '@/types';
+
 
 export class AuthService {
-  private readonly endpoint = '/auth';
 
-  /**
-   * Sends a login request to the backend.
-   * @param credentials The user's login credentials.
-   * @returns A promise that resolves to the authentication response (token and user info).
-   */
-  async login(credentials: LoginDto): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>(`${this.endpoint}/login`, credentials);
-    // Store the token for subsequent requests
-    localStorage.setItem('accessToken', response.data.accessToken);
-    return response.data;
+  async login({ email, password, accountNumber }: LoginDto) {
+    const response = await apiClient.post('/auth/login', {
+      email,
+      password,
+      accountNumber,
+    });
+
+
+    const data = response.data;
+
+    return {
+      token: data.access_token,
+      accountNumber: accountNumber,
+      role: data.role,
+      meta: {
+        fullName: data.full_name,
+        accountCategory: data.account_category,
+      },
+    };
   }
 
-  /**
-   * Simulates a logout by clearing the stored token.
-   */
-  logout(): void {
-    localStorage.removeItem('accessToken');
-    // In a real app, you might also call a backend logout endpoint to invalidate the token
+  logout() {
+    tokenStorage.clearAll();
+
   }
 }

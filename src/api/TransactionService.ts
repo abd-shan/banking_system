@@ -36,7 +36,7 @@ export class TransactionService {
   }
 
   /**
-   * GET /transactions/account/:id - Get transaction history for an account.
+   * GET /transactions/account/:id - Get transactions history for an account.
    */
   async getAccountHistory(accountId: string): Promise<Transaction[]> {
     const response = await apiClient.get<Transaction[]>(`${this.endpoint}/account/${accountId}`);
@@ -52,7 +52,7 @@ export class TransactionService {
   }
 
   /**
-   * POST /transactions/:id/review - Review a pending transaction.
+   * POST /transactions/:id/review - Review a pending transactions.
    */
   async reviewTransaction(transactionId: string, dto: ReviewTransactionDto): Promise<Transaction> {
     const response = await apiClient.post<Transaction>(`${this.endpoint}/${transactionId}/review`, dto);

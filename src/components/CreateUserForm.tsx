@@ -11,6 +11,7 @@ export const CreateUserForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [full_name,setFullName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [role, setRole] = useState<UserRole>(UserRole.CUSTOMER);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
@@ -19,21 +20,27 @@ export const CreateUserForm = () => {
     e.preventDefault();
     setMessage(null);
     setIsLoading(true);
-    setFullName(firstName + lastName);
-    
+
+
+    const computedFullName = `${firstName} ${lastName}`.trim();
+
     try {
       const newUser = await bankFacade.createNewUser({
         email,
         password,
-        full_name,
+        phone_number: phoneNumber,
+        full_name: computedFullName,
         role,
       });
 
       setMessage({ text: `User ${newUser.email} created successfully!`, type: 'success' });
+
+
       setEmail('');
       setPassword('');
       setFirstName('');
       setLastName('');
+      setPhoneNumber('');
       setRole(UserRole.CUSTOMER);
     } catch (e: any) {
       const errorMessage = e.response?.data?.message || e.message || 'User creation failed.';
@@ -42,6 +49,7 @@ export const CreateUserForm = () => {
       setIsLoading(false);
     }
   };
+
 
   const MessageDisplay = () => {
     if (!message) return null;
@@ -74,6 +82,12 @@ export const CreateUserForm = () => {
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email</label>
           <input id="email" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required className="shadow border rounded w-full py-2 px-3 text-gray-700" />
         </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+          <input type="text" placeholder="09xxxxxxxx" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:ring-2 focus:ring-blue-500 outline-none" />
+        </div>
+
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
           <input id="password" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="shadow border rounded w-full py-2 px-3 text-gray-700" />
